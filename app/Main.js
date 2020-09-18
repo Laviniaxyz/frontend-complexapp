@@ -31,6 +31,7 @@ function Main() {
   const initialState = {
     loggedIn: Boolean(localStorage.getItem("complexappToken")),
     flashMessages: [],
+    successAction: true,
     user: {
       token: localStorage.getItem("complexappToken"),
       username: localStorage.getItem("complexappUsername"),
@@ -44,6 +45,7 @@ function Main() {
   function ourReducer(draft, action) {
     switch (action.type) {
       case "login":
+        draft.successAction = true;
         draft.loggedIn = true;
         draft.user = action.data;
         return;
@@ -71,6 +73,8 @@ function Main() {
       case "clearUnreadChatCount":
         draft.unreadChatCount = 0;
         return;
+      case "failedAction":
+        draft.successAction = false;
     }
   }
 
@@ -118,7 +122,10 @@ function Main() {
     <StateContext.Provider value={state}>
       <DispatchContext.Provider value={dispatch}>
         <BrowserRouter>
-          <FlashMessages messages={state.flashMessages} />
+          <FlashMessages
+            messages={state.flashMessages}
+            successAction={state.successAction}
+          />
           <Header />
           <Suspense fallback={<LoadingDotsIcon />}>
             <Switch>
